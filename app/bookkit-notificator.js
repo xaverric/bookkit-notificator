@@ -6,26 +6,27 @@ const {loadBookPagesPerf} = require("./modules/bookkit-notificator-service");
 const {processPages} = require("./modules/bookkit/loaded-pages-processor");
 const {sendEmailNotification} = require("./modules/mail/sender/mail-sender");
 const packageJson = require("../package.json");
+const {currentDateTime} = require("./modules/util/date-helper");
 
 const notify = async (cmdArgs) => {
     const configuration = await readConfiguration(cmdArgs);
-    const token = await login(configuration.bookkit.oidcHost, configuration.bookkit.accessCode1, configuration.bookkit.accessCode2);
+    await Promise.all(configuration.map(async bookkitConfiguration => await _processBookkitNotifications(bookkitConfiguration)))
+}
 
-    // TODO multiple bookkits suport
-
+const _processBookkitNotifications = async bookkitConfiguration => {
+    const token = await login(bookkitConfiguration.bookkit.oidcHost, bookkitConfiguration.bookkit.accessCode1, bookkitConfiguration.bookkit.accessCode2);
     // TODO load including section history history
     // TODO listPageSectionVersion for every section in the page
-    let pages = await loadBookPagesPerf(configuration, token);
-    // TODO fix sorting from newest to oldest
-    const processedPages = processPages(pages, configuration);
+    CONSOLE_LOG.info(`${currentDateTime()} Loading pages for ${bookkitConfiguration.bookkit.name}`);
+    let pages = await loadBookPagesPerf(bookkitConfiguration, token);
+    CONSOLE_LOG.info(`${currentDateTime()} Processing pages for ${bookkitConfiguration.bookkit.name}`);
+    const processedPages = processPages(pages, bookkitConfiguration);
 
     if (processedPages && processedPages.length !== 0) {
-        // TODO adjust output - "$NAME updated $PAGE"
-        // TODO add description - from-to timeinterval changes are relevant
-        let htmlContent = buildEmailHtmlContent({pages: processedPages, configuration});
-        await sendEmailNotification(htmlContent, configuration);
+        let htmlContent = buildEmailHtmlContent({pages: processedPages, configuration: bookkitConfiguration});
+        await sendEmailNotification(htmlContent, bookkitConfiguration);
     } else {
-        CONSOLE_LOG.info("No news to notify about... :(");
+        CONSOLE_LOG.info(`No news to notify about for ${bookkitConfiguration.bookkit.name}... :(`);
     }
 }
 

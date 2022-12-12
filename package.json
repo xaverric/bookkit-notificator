@@ -1,6 +1,6 @@
 {
   "name": "bookkit-notificator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "You never knew, you wanted this tool this bad.",
   "main": "cli.js",
   "scripts": {

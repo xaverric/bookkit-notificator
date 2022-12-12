@@ -5,7 +5,7 @@ const sendEmailNotification = async (emailContent, configuration) => {
     let transporter = nodemailer.createTransport(configuration.notifications.email.transportsConfiguration);
 
     for (const recipient of configuration.notifications.email.recipients) {
-        CONSOLE_LOG.info(`Sending email notification to recipient: ${recipient}`);
+        CONSOLE_LOG.info(`Sending email notification to recipient: ${recipient} (${configuration.bookkit.name})`);
         let info = await transporter.sendMail({
             from: '"Bookkit Notifications 📚" <noreply@bookkit-notifier.com>',
             to: recipient,

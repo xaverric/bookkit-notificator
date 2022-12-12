@@ -1,7 +1,9 @@
 const resolveNotificationTimeOffset = configuration => {
-    configuration.notifications.timeNow = new Date();
-    configuration.notifications.timeFrom = new Date();
-    configuration.notifications.timeFrom.setHours(configuration.notifications.timeNow.getHours() - configuration.notifications.offset);
+    configuration.forEach(configItem => {
+        configItem.notifications.timeNow = new Date();
+        configItem.notifications.timeFrom = new Date();
+        configItem.notifications.timeFrom.setHours(configItem.notifications.timeNow.getHours() - configItem.notifications.offset);
+    });
     return configuration;
 }
 
