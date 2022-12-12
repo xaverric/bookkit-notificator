@@ -1,4 +1,4 @@
-# uucloud-db-translator
+# bookkit-notificator
 
 ## Installation
 ```
