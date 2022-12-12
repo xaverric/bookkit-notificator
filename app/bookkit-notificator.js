@@ -5,6 +5,7 @@ const {buildEmailHtmlContent} = require("./modules/mail/template/email-html-cont
 const {loadBookPagesPerf} = require("./modules/bookkit-notificator-service");
 const {processPages} = require("./modules/bookkit/loaded-pages-processor");
 const {sendEmailNotification} = require("./modules/mail/sender/mail-sender");
+const packageJson = require("../package.json");
 
 const notify = async (cmdArgs) => {
     const configuration = await readConfiguration(cmdArgs);
