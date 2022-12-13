@@ -1,10 +1,10 @@
 const { default: axios } = require('axios');
-const {LOG, CONSOLE_LOG} = require('../logger/logger');
+const {CONSOLE_LOG} = require('../logger/logger');
 
 const callCommand = async (uri, method, data, token = null) => {
+    CONSOLE_LOG.debug(`Calling command ${method}: ${uri} ${JSON.stringify(data)}`);
     const dtoIn = _prepareAxiosConfig(uri, method, data, token);
     const response = await axios(dtoIn);
-    CONSOLE_LOG.debug(`Calling command ${method}: ${uri} ${JSON.stringify(data)}`);
     return response.data;
 
 };

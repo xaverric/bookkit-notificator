@@ -1,17 +1,35 @@
 const processPages = (pages, configuration) => {
     return pages
-        .map(page => _transformPageAndFilterSectionWithinTimeOffsetr(page, configuration))
+        .map(page => _transformPageAndFilterSectionWithinTimeOffset(page, configuration))
         .flatMap(_transformToSectionArray)
         .sort(_sortByTime)
 }
 
-const _transformPageAndFilterSectionWithinTimeOffsetr = (page, configuration) => {
+const processPagesLight = (pages, configuration) => {
+    return pages
+        .map(_transformPageAndFilterSectionWithinTimeOffsetLight)
+        .filter(item => _isWithinTimeOffset(item, configuration))
+        .sort(_sortByTime);
+}
+
+const _transformPageAndFilterSectionWithinTimeOffset = (page, configuration) => {
     return {
         name: page?.name?.en || "Unknown Name",
         pageCode: page?.code || "Unknown Code",
         sections: page?.body
             ?.map(_resolveSectionItem)
-            ?.filter(section => _isSectionWithinTimeOffset(section, configuration)) || []
+            ?.filter(section => _isWithinTimeOffset(section, configuration)) || []
+    }
+}
+
+const _transformPageAndFilterSectionWithinTimeOffsetLight = (page) => {
+    const createdTime = new Date(page.sys.cts);
+    const modifiedTime = page.sys.mts && createdTime.getTime() !== new Date(page.sys.mts).getTime() ? new Date(page.sys.mts) : null;
+    return {
+        name: page?.name?.en || "Unknown Name",
+        pageCode: page?.code || "Unknown Code",
+        created: createdTime,
+        modified: modifiedTime
     }
 }
 
@@ -27,8 +45,8 @@ const _resolveSectionItem = bodyItem => {
     }
 }
 
-const _isSectionWithinTimeOffset = (section, configuration) => {
-    return section.modified > configuration.notifications.timeFrom || section.created > configuration.notifications.timeFrom
+const _isWithinTimeOffset = (item, configuration) => {
+    return item.modified > configuration.notifications.timeFrom || item.created > configuration.notifications.timeFrom
 }
 
 const _transformToSectionArray = page => {
@@ -47,5 +65,6 @@ const _sortByTime = (a, b) => {
 }
 
 module.exports = {
-    processPages
+    processPages,
+    processPagesLight
 }

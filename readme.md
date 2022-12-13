@@ -38,6 +38,9 @@ File path to the configuration object.
 ```js
 module.exports = [
     {
+        // light - loads changes on the pages only
+        // full - scans all pages and its content for changes
+        strategy: "light | full", // light is default 
         bookkit: {
             oidcHost: "oidc grantToken uri",
             uri: "bookkit uri",
